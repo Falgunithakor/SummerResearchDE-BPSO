@@ -3,10 +3,12 @@ from src.SplitTypes import SplitTypes
 from src.FileManager import FileManager
 from src.DataManager import DataManager
 from src.Population import Population
+import numpy as np
 from src.Normalizer import *
 
-no_of_populations = 50   # should be 50 population
+population_size = 50   # should be 50 population
 no_of_descriptors = 385  # should be 385 descriptors
+descriptor_selection_probability = 0.01
 unfit = 1000
 
 required_r2 = {}
@@ -18,7 +20,6 @@ file_path = "../Dataset/00-91-Drugs-All-In-One-File.csv"
 loaded_data = FileManager.load_file(file_path)
 output_filename = FileManager.create_output_file()
 
-
 #rescaling_normalizer = RescalingNormalizer()
 #scikit_normalizer = ScikitNormalizer()
 #data_manager = DataManager(normalizer=scikit_normalizer)
@@ -29,31 +30,38 @@ data_manager.split_data(test_split=0.15, train_split=0.70)
 
 model = svm.SVR()
 
-population = Population()
-population.load_data()
+# velocity_matrix = np.zeros((population_size,no_of_descriptors))
+
+# define the first population
+# validation of a row generating random row for
+population = Population(population_size=population_size, no_of_descriptors=no_of_descriptors, velocity_matrix=np.zeros((population_size,no_of_descriptors)), descriptor_selection_probability=descriptor_selection_probability)
+arr_data, arr_velocity = population.create_first_population()
+
+'''
+pseudo-code
+for i=0; i<50; i++
+{
+    count = 0;
+    for j=0; j < 385; j++)
+      if (velocity [i, j] <= 0.015)
+        count++
+    print ("row: " i,  " has ", count elements
+}
+'''
+
+for i in range(0, population_size):
+    count = 0
+    for j in range(0, no_of_descriptors):
+        if arr_velocity[i,j] <= descriptor_selection_probability:
+            #print("rows", i,"col", j, "matrix ", arr_velocity[i, j])
+            count = count + 1
+    print("Number of velocity < 0.01 for row", i , " is ", count)
 
 
 '''
+for i=0; i<50; i++
+    print "row ", i " Indexes are ", population[i].sum()
+'''
 
-    TrainX, TrainY, ValidateX, ValidateY, TestX, TestY = FromDataFileMLR_DE_BPSO.getAllOfTheData()
-    TrainX, ValidateX, TestX = FromDataFileMLR_DE_BPSO.rescaleTheData(TrainX, ValidateX, TestX)
-
-    velocity = createInitVelMat(numOfPop, numOfFea)
-
-
-    def rescaleTheData(TrainX, ValidateX, TestX):
-
-    # 1 degree of freedom means (ddof) N-1 unbiased estimation
-    TrainXVar = TrainX.var(axis = 0, ddof=1)
-    TrainXMean = TrainX.mean(axis = 0)
-
-    for i in range(0, TrainX.shape[0]):
-        TrainX[i,:] = (TrainX[i,:] - TrainXMean)/sqrt(TrainXVar)
-    for i in range(0, ValidateX.shape[0]):
-        ValidateX[i,:] = (ValidateX[i,:] - TrainXMean)/sqrt(TrainXVar)
-    for i in range(0, TestX.shape[0]):
-        TestX[i,:] = (TestX[i,:] - TrainXMean)/sqrt(TrainXVar)
-
-    return TrainX, ValidateX, TestX
-
-#------------------------------------------------------------------------------'''
+for i in range(0, population_size):
+    print("Population index ", i, " row sum ", arr_data[i].sum())

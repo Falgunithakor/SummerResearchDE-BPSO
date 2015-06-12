@@ -6,10 +6,10 @@ file_path = "../Dataset/00-91-Drugs-All-In-One-File.csv"
 loaded_data = FileLoader.load_file(file_path)
 
 data_manager = DataManager(normalizer=None)
-data_manager.set_data(loaded_data)
+data_manager.create_first_population(loaded_data)
 data_manager.split_data(test_split=0.15, train_split=0.70)
 
 population = Population()
-population.load_data()
+population.create_first_population()
 for i in range (1,50):
     print("row", i, population.data[i].sum())

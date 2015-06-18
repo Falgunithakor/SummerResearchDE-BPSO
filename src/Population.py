@@ -5,7 +5,7 @@ __author__ = 'FalguniT'
 
 class Population(object):
     def __init__(self, population_size, no_of_descriptors, velocity_matrix, descriptor_selection_probability):
-        self.data = None
+        self.population_matrix = None
         self.population_size = population_size
         self.no_of_descriptor = no_of_descriptors
         self.velocity_matrix = velocity_matrix
@@ -15,20 +15,13 @@ class Population(object):
 
 
     def create_first_population(self):
-        self.data = np.zeros((self.population_size, self.no_of_descriptor))
-        for rows in range(0, self.population_size):
-            population_row = self.data[rows]
-            velocity_row = np.random.random(self.no_of_descriptor)
-            population_row_sum = population_row.sum()
-            while population_row_sum < self.minimum_expected_descriptor:
-                #self.velocity_matrix[rows] = velocity_row
-                #for v in range(0,self.no_of_descriptor - 1):
-                #    self.velocity_matrix[rows,v] = velocity_row[v]
-                for col in range(0, self.no_of_descriptor):
-                    if velocity_row[col] <= self.descriptor_selection_probability:
-                        #print("rows", rows,"col", col, "matrix ", self.velocity_matrix[rows, col])
-                        population_row[col]= 1
-                population_row_sum = population_row.sum()
-        self.data[rows] = population_row
-        self.velocity_matrix[rows] = velocity_row
-        return self.data, self.velocity_matrix
+        '''
+        We do not need to check for validity for every row as it's already done at velocity level
+        Go thru every row and column and find out what the population matrix should be
+        :return:
+        '''
+        self.population_matrix = np.zeros((self.population_size, self.no_of_descriptor))
+        #array_np = numpy.asarray(array)
+
+        low_values_indices = self.velocity_matrix <= self.descriptor_selection_probability  # Where values are low
+        self.population_matrix[low_values_indices] = 1

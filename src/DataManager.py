@@ -1,20 +1,18 @@
 import numpy as np
-from SplitTypes import SplitTypes
+from src.SplitTypes import SplitTypes
 
 class DataManager(object):
-    def __init__(self, normalizer=None):
+    def __init__(self, normalizer=None, feature_selection_algorithm = None):
         self.data = None
         self.datum = {}
         self.targets = {}
         self.inputs = {}
         self.normalizer = normalizer
-        '''
-        self.transformed_input = {}
         self.feature_eliminator = feature_selection_algorithm
-
+        self.transformed_input = {}
         self.num_input_columns = None
         self.num_columns = None
-        '''
+
 
     def set_data(self, result):
         self.num_columns = result.shape[1]
@@ -39,10 +37,10 @@ class DataManager(object):
             self.inputs[split_type] = self.datum[split_type][:, 0:self.num_input_columns]
             self.targets[split_type] = self.datum[split_type][:, self.num_input_columns:self.num_columns].ravel()
 
-    '''
+
     def run_default_feature_elimination(self):
         for split_type in SplitTypes.split_types_collection:
-            self.inputs[split_type] = self.datum[split_type][:, 0:395]
+            self.inputs[split_type] = self.datum[split_type][:, 0:self.num_input_columns]
 
     def run_feature_elimination(self):
         if self.feature_eliminator is None:
@@ -51,4 +49,4 @@ class DataManager(object):
             self.feature_eliminator.fit(self.inputs[SplitTypes.Train], self.targets[SplitTypes.Train])
             for split_type in SplitTypes.split_types_collection:
                 self.transformed_input[split_type] = self.feature_eliminator.transform(self.inputs[split_type])
-    '''
+

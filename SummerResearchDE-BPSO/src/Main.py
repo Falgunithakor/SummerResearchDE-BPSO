@@ -12,4 +12,4 @@ data_manager.split_data(test_split=0.15, train_split=0.70)
 population = Population()
 population.create_first_population()
 for i in range (1,50):
-    print("row", i, population.data[i].sum())
+    print("row", i, population.population_matrix[i].sum())

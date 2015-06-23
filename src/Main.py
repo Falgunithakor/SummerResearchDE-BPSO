@@ -55,6 +55,6 @@ debpso = DEBPSO(population.population_matrix[0])
 #data_manager.transformed_input[SplitTypes.Train] = debpso.transform(data_manager.inputs[SplitTypes.Train])
 
 
-data_manager.feature_eliminator = debpso
+data_manager.feature_selector = debpso
 experiment = Experiment(data_manager, model)
 experiment.run_experiment()

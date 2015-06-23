@@ -7,6 +7,7 @@ class DEBPSO(object):
         self.selected_descriptors = None
 
     def fit(self, X, y):
+        self.population_i = X
         self.selected_descriptors = self.OnlySelectTheOnesColumns()
 
     def transform(self, X):

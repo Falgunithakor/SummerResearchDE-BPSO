@@ -8,7 +8,7 @@ class DataManager(object):
         self.targets = {}
         self.inputs = {}
         self.normalizer = normalizer
-        self.feature_eliminator = feature_selection_algorithm
+        self.feature_selector = feature_selection_algorithm
         self.transformed_input = {}
         self.num_input_columns = None
         self.num_columns = None
@@ -38,15 +38,15 @@ class DataManager(object):
             self.targets[split_type] = self.datum[split_type][:, self.num_input_columns:self.num_columns].ravel()
 
 
-    def run_default_feature_elimination(self):
+    def run_default_feature_selection(self):
         for split_type in SplitTypes.split_types_collection:
             self.inputs[split_type] = self.datum[split_type][:, 0:self.num_input_columns]
 
-    def run_feature_elimination(self):
-        if self.feature_eliminator is None:
-            self.run_default_feature_elimination()
+    def run_feature_selection(self):
+        if self.feature_selector is None:
+            self.run_default_feature_selection()
         else:
-            self.feature_eliminator.fit(self.inputs[SplitTypes.Train], self.targets[SplitTypes.Train])
+            self.feature_selector.fit(self.inputs[SplitTypes.Train], self.targets[SplitTypes.Train])
             for split_type in SplitTypes.split_types_collection:
-                self.transformed_input[split_type] = self.feature_eliminator.transform(self.inputs[split_type])
+                self.transformed_input[split_type] = self.feature_selector.transform(self.inputs[split_type])
 

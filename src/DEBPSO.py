@@ -1,3 +1,6 @@
+from src.Population import Population
+from src.Velocity import Velocity
+
 __author__ = 'FalguniT'
 import numpy as np
 
@@ -6,8 +9,17 @@ class DEBPSO(object):
         self.population_i = population_i
         self.selected_descriptors = None
 
+        self.create_first_velocity_population()
+
+    def create_first_velocity_population(self):
+        velocity = Velocity()
+        velocity_matrix = velocity.create_first_velocity()
+
+        population = Population(velocity_matrix=velocity_matrix)
+        population.create_first_population()
+
     def fit(self, X, y):
-        self.population_i = X
+        #self.population_i = X
         self.selected_descriptors = self.OnlySelectTheOnesColumns()
 
     def transform(self, X):

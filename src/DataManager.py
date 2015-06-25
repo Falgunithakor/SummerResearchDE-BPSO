@@ -1,4 +1,5 @@
 import numpy as np
+from src.VariableSetting import VariableSetting
 from src.SplitTypes import SplitTypes
 
 class DataManager(object):
@@ -22,10 +23,10 @@ class DataManager(object):
             self.normalizer.fit(self.data[:, 0:self.num_input_columns])
             self.data[:, 0:self.num_input_columns] = self.normalizer.transform(self.data[:, 0:self.num_input_columns])
 
-    def split_data(self, test_split, train_split):
-        num_rows = self.data.shape[0]
-        test_index = int(np.rint(num_rows * test_split))
-        train_index = int(np.rint(num_rows * train_split)) + test_index
+    def split_data_into_train_valid_test_sets(self):
+        # no of rows = no of drugs
+        test_index = int(np.rint(VariableSetting.No_of_Drugs * VariableSetting.Test_Data_Percentage))
+        train_index = int(np.rint(VariableSetting.No_of_Drugs * VariableSetting.Train_Data_Percentage)) + test_index
 
         self.datum = {
             SplitTypes.Train: self.data[test_index:train_index, :],

@@ -1,0 +1,2 @@
+Population_size=,50,Descriptor_Selection_Probability=,0.01,Unfit=,1000,Required_r2_Train=,0.6,Required_r2_Valid=,0.5,Required_r2_Test=,0.5,Train_Data_Percentage=,0.7,Test_Data_Percentage=,0.15,Generation=,1,Stop_time=,50,Initial_alpha=,0.5,Ending_alpha=,0.33,Beta=,0.004,Gamma=,3.3,Scaling_Factor_F=,0.7,Crossover_Rate_CR=,0.7
+

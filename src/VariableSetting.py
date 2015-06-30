@@ -20,25 +20,29 @@ class VariableSetting(object):
     Gamma = 3.3
     Scaling_Factor = 0.7
     Crossover_Rate = 0.7
+    Feature_Selection_Algorithm = 'DEBPSO'
+    Model = 'SVM'
 
 
     @staticmethod
     def set_variables(variables, no_of_drugs, no_of_descriptors):
-        VariableSetting.Population_Size = int(variables[1])                    # = 50
-        VariableSetting.Descriptor_Selection_Probability = variables[3]   # = 0.01
-        VariableSetting.Unfit = int(variables[5])                        # = 1000,
-        VariableSetting.Required_r2_Train = variables[7]                  # = 0.6,
-        VariableSetting.Required_r2_Valid = variables[9]                  # = 0.5,
-        VariableSetting.Required_r2_Test = variables[11]                   # = 0.5
-        VariableSetting.Train_Data_Percentage = variables[13]              # = 0.7
-        VariableSetting.Test_Data_Percentage   = variables[15]             # = 0.15
-        VariableSetting.Generation = int(variables[17])                          # = 0.15
-        VariableSetting.Stop_time = int(variables[19])                    # = 0.15
-        VariableSetting.Initial_alpha= variables[21]                        # = 0.15
-        VariableSetting.Ending_alpha = variables[23]                        # = 0.15
-        VariableSetting.Beta = variables[25]                                # = 0.15
-        VariableSetting.Gamma = variables[27]                               # = 0.15
-        VariableSetting.Scaling_Factor = variables[29]                      # = 0.15
-        VariableSetting.Crossover_Rate = variables[31]                      # = 0.15
-        VariableSetting.No_of_Drugs = int(no_of_drugs)                         # = 91
-        VariableSetting.No_of_Descriptors = int(no_of_descriptors)             # = 385
+        VariableSetting.Population_Size = int(variables[0][1])                    # = 50
+        VariableSetting.Descriptor_Selection_Probability = float(variables[1][1])   # = 0.01
+        VariableSetting.Unfit = int(variables[2][1])                        # = 1000,
+        VariableSetting.Required_r2_Train = float(variables[3][1])                  # = 0.6,
+        VariableSetting.Required_r2_Valid = float(variables[4][1] )                 # = 0.5,
+        VariableSetting.Required_r2_Test = float(variables[5][1] )                # = 0.5
+        VariableSetting.Train_Data_Percentage = float(variables[6][1] )             # = 0.7
+        VariableSetting.Test_Data_Percentage   = float(variables[7][1]  )         # = 0.15
+        VariableSetting.Generation = int(variables[8][1])                          # = 0.15
+        VariableSetting.Stop_time = int(variables[9][1])                    # = 0.15
+        VariableSetting.Initial_alpha= float(variables[10][1] )                       # = 0.15
+        VariableSetting.Ending_alpha =float( variables[11][1] )                      # = 0.15
+        VariableSetting.Beta = float(variables[12][1])                                # = 0.15
+        VariableSetting.Gamma = float(variables[13][1] )                           # = 0.15
+        VariableSetting.Scaling_Factor = float(variables[14][1])                     # = 0.15
+        VariableSetting.Crossover_Rate = float(variables[15][1]       )            # = 0.15
+        VariableSetting.Feature_Selection_Algorithm = str(variables[16][1], encoding='ascii')      # = DEBPSO
+        VariableSetting.Model = str(variables[17][1], encoding='ascii')                  # = SVM
+        VariableSetting.No_of_Drugs = int(no_of_drugs)                      # = 91
+        VariableSetting.No_of_Descriptors = int(no_of_descriptors)          # = 385

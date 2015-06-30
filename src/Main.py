@@ -7,6 +7,7 @@ from src.ReadData import ReadData
 from src.SplitTypes import SplitTypes
 from src.FileManager import FileManager
 from src.DataManager import DataManager
+from src.VariableSetting import VariableSetting
 from src.Velocity import Velocity
 
 read_data = ReadData()
@@ -22,21 +23,18 @@ data_manager = DataManager(normalizer=None)
 data_manager.set_data(loaded_data)
 data_manager.split_data_into_train_valid_test_sets()
 
-model = svm.SVR()
-'''
-velocity = Velocity()
-velocity_matrix = velocity.create_first_velocity()
+#data_manager.feature_selector = debpso
+feature_selection_algo = None
 
-# define the first population
-# validation of a row generating random row for
-population = Population(velocity_matrix=velocity_matrix)
-population.create_first_population()
+if VariableSetting.Feature_Selection_Algorithm == 'GA' and VariableSetting.Model == 'SVM':
+    #feature_selection_algo = GA()
+    model = svm.SVR()
+elif VariableSetting.Feature_Selection_Algorithm == 'DEBPSO' and VariableSetting.Model == 'SVM':
+    feature_selection_algo = DEBPSO()
+    model = svm.SVR()
+#every other combination of feature and models are done same way
 
-debpso = DEBPSO(population.population_matrix[0])
-'''
-debpso = DEBPSO()
-data_manager.feature_selector = debpso
-experiment = Experiment(data_manager, model)
+experiment = Experiment(data_manager, model, feature_selection_algo)
 experiment.run_experiment()
 
 

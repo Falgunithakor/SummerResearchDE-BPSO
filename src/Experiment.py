@@ -2,12 +2,14 @@ import numpy as np
 from sklearn.metrics import mean_squared_error
 from  src.SplitTypes import SplitTypes
 import matplotlib.pyplot as plt
+from src.VariableSetting import VariableSetting
 
 
 class Experiment(object):
 
-    def __init__(self, data_manager, model):
+    def __init__(self, data_manager, model, feature_selection_algo):
         self.model = model
+        self.feature_selector = feature_selection_algo
         self.data_manager = data_manager
         self.predict = {}
         self.r2_values = {}
@@ -40,19 +42,27 @@ class Experiment(object):
             self.sum_of_squares_values[split_type] = (
                 np.sum(((self.data_manager.targets[split_type] - self.predict[split_type]) ** 2)))
             '''
-        self.fitness = self.find_fitness()
+        self.feature_selector.fitness_matrix[self.feature_selector.current_population_index] = self.find_fitness()
 
     def run_experiment(self):
         # initialize velocity and population
         # we need anther class that holds current population, velocity, current transformed matrix,
         # a reference for population row, population iteration, current generation
         # loop thru all population rows and generate fitness
-        if self.data_manager.feature_selector is None:
+        if self.feature_selector is None:
             data_inputs = self.data_manager.inputs
         else:
-            self.data_manager.run_feature_selection()
+            self.run_feature_selection()
             data_inputs = self.data_manager.transformed_input
         self.fit_and_evaluate_model(data_inputs)
+
+    def run_feature_selection(self):
+        if self.feature_selector is None:
+            self.data_manager.run_default_feature_selection()
+        else:
+            self.feature_selector.fit(self.data_manager.inputs[SplitTypes.Train], self.data_manager.targets[SplitTypes.Train])
+            for split_type in SplitTypes.split_types_collection:
+                self.data_manager.transformed_input[split_type] = self.feature_selector.transform(self.data_manager.inputs[split_type])
 
     '''
     def get_sum_of_squares(self, split_type):

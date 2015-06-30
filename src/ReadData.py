@@ -1,3 +1,4 @@
+import  numpy as np
 from src.FileManager import FileManager
 from src.VariableSetting import VariableSetting
 
@@ -12,6 +13,6 @@ class ReadData(object):
         no_of_drugs = loaded_data.shape[0]
         no_of_descriptors = loaded_data.shape[1] - 1    # excluding the last column that is the y axis
 
-        variables = FileManager.load_file(variable_file_path)
+        variables = FileManager.load_variable_file(variable_file_path)
         VariableSetting.set_variables(variables, no_of_drugs, no_of_descriptors)
         return loaded_data

@@ -1,7 +1,9 @@
 import unittest
+import numpy as np
 from src.FileManager import FileManager
 from src.ReadData import ReadData
 from src.VariableSetting import VariableSetting
+
 
 
 class TestDEBPSO(unittest.TestCase):
@@ -26,5 +28,9 @@ class TestDEBPSO(unittest.TestCase):
         print("Crossover_Rate ", VariableSetting.Crossover_Rate)
         print("No_of_Drugs ", VariableSetting.No_of_Drugs)
         print("No_of_Descriptors ", VariableSetting.No_of_Descriptors)
+        print("Feature_Selection_Algorithm ", VariableSetting.Feature_Selection_Algorithm)
+        print("Model ", VariableSetting.Model)
 
+    def test_string_variables(self):
+        array_data = np.array([[1], [2], ['re']])
 

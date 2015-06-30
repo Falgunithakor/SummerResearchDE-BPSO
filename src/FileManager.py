@@ -9,6 +9,11 @@ class FileManager(object):
         loaded_file = np.genfromtxt(file_path,delimiter=',')
         return loaded_file
 
+
+    def load_variable_file(file_path):
+         loaded_file = np.loadtxt(file_path, delimiter=',',  dtype={'names': ('Name', 'Value'),  'formats': ('S1','S10')})
+         return loaded_file
+
     @staticmethod
     def create_output_file():
         timestamp = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())

@@ -63,5 +63,5 @@ class TestDEBPSO(unittest.TestCase):
         debpso.fit(data_manager.inputs[SplitTypes.Train], data_manager.targets[SplitTypes.Train])
         data_manager.transformed_input[SplitTypes.Train] = debpso.transform(data_manager.inputs[SplitTypes.Train])
         print("Population 0 row sum ", population.population_matrix[0].sum())
-        print("Selected feature descriptors",debpso.selected_descriptors)
+        print("Selected feature descriptors",debpso.sel_descriptors_for_curr_population)
         print("Transformed array", data_manager.transformed_input[SplitTypes.Train])

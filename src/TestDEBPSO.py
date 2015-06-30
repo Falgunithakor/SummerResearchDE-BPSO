@@ -32,5 +32,5 @@ class TestDEBPSO(unittest.TestCase):
         debpso = DEBPSO(population.population_matrix[1])
         debpso.fit(data_manager.inputs[SplitTypes.Train], data_manager.targets[SplitTypes.Train])
         print("Population 1 row sum ", population.population_matrix[1].sum())
-        print("Selected feature descriptors",debpso.selected_descriptors)
+        print("Selected feature descriptors",debpso.sel_descriptors_for_curr_population)
 

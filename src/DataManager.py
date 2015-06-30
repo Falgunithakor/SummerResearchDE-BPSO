@@ -39,15 +39,9 @@ class DataManager(object):
             self.targets[split_type] = self.datum[split_type][:, self.num_input_columns:self.num_columns].ravel()
 
 
+
     def run_default_feature_selection(self):
         for split_type in SplitTypes.split_types_collection:
             self.inputs[split_type] = self.datum[split_type][:, 0:self.num_input_columns]
 
-    def run_feature_selection(self):
-        if self.feature_selector is None:
-            self.run_default_feature_selection()
-        else:
-            self.feature_selector.fit(self.inputs[SplitTypes.Train], self.targets[SplitTypes.Train])
-            for split_type in SplitTypes.split_types_collection:
-                self.transformed_input[split_type] = self.feature_selector.transform(self.inputs[split_type])
 

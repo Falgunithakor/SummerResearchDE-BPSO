@@ -22,3 +22,4 @@ class Population(object):
 
         low_values_indices = self.velocity_matrix <= VariableSetting.Descriptor_Selection_Probability  # Where values are low
         self.population_matrix[low_values_indices] = 1
+        return self.population_matrix

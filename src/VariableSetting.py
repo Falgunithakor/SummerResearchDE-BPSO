@@ -12,7 +12,7 @@ class VariableSetting(object):
     Test_Data_Percentage = 0.15
     No_of_Drugs = 91
     No_of_Descriptors = 385
-    Generation = 1
+    Generation = 2000
     Stop_time = 50
     Initial_alpha = 0.5
     Ending_alpha = 0.33
@@ -22,6 +22,7 @@ class VariableSetting(object):
     Crossover_Rate = 0.7
     Feature_Selection_Algorithm = 'DEBPSO'
     Model = 'SVM'
+    Iteration = 1
 
 
     @staticmethod
@@ -44,5 +45,6 @@ class VariableSetting(object):
         VariableSetting.Crossover_Rate = float(variables[15][1]       )            # = 0.15
         VariableSetting.Feature_Selection_Algorithm = str(variables[16][1], encoding='ascii')      # = DEBPSO
         VariableSetting.Model = str(variables[17][1], encoding='ascii')                  # = SVM
+        VariableSetting.Iteration = int(variables[18][1])                       # = 1
         VariableSetting.No_of_Drugs = int(no_of_drugs)                      # = 91
         VariableSetting.No_of_Descriptors = int(no_of_descriptors)          # = 385

@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error
+from src.DEBPSO import DEBPSO
 from  src.SplitTypes import SplitTypes
 import matplotlib.pyplot as plt
 from src.VariableSetting import VariableSetting
@@ -36,25 +37,37 @@ class Experiment(object):
     def fit_and_evaluate_model(self, data_inputs):
         self.model.fit(data_inputs[SplitTypes.Train], np.ravel(self.data_manager.targets[SplitTypes.Train]))
         for split_type in SplitTypes.split_types_collection:
-            self.predict[split_type] = self.model.predict(data_inputs[split_type])
-            self.r2_values[split_type] = self.model.score(data_inputs[split_type], (self.data_manager.targets[split_type]))
+            self.predict[self.feature_selector.current_population_index][split_type] = self.model.predict(data_inputs[split_type])
+            self.r2_values[self.feature_selector.current_population_index][split_type] = self.model.score(data_inputs[split_type], (self.data_manager.targets[split_type]))
             '''
             self.sum_of_squares_values[split_type] = (
                 np.sum(((self.data_manager.targets[split_type] - self.predict[split_type]) ** 2)))
             '''
         self.feature_selector.fitness_matrix[self.feature_selector.current_population_index] = self.find_fitness()
+        #result of this function must go to a file, includes co-efficients, model name, r2 train, r2 validate, r2 test, fitness value & q2 values
 
     def run_experiment(self):
         # initialize velocity and population
         # we need anther class that holds current population, velocity, current transformed matrix,
         # a reference for population row, population iteration, current generation
         # loop thru all population rows and generate fitness
-        if self.feature_selector is None:
-            data_inputs = self.data_manager.inputs
-        else:
-            self.run_feature_selection()
-            data_inputs = self.data_manager.transformed_input
-        self.fit_and_evaluate_model(data_inputs)
+        for iteration in range(1, VariableSetting.Iteration):
+            for generation in range(1, VariableSetting.Generation):
+                self.feature_selector = DEBPSO()
+                for population_idx in range(0, VariableSetting.Population_Size - 1):
+                    #population matrix swatch
+                    self.feature_selector.current_population_index = population_idx
+                    if self.feature_selector is None:
+                        data_inputs = self.data_manager.inputs
+                    else:
+                        self.run_feature_selection()
+                        data_inputs = self.data_manager.transformed_input[population_idx]
+                    self.fit_and_evaluate_model(data_inputs)
+
+                    #old population and new population
+
+                self.feature_selector.get_global_row()
+                self.feature_selector.current_population_index = 0
 
     def run_feature_selection(self):
         if self.feature_selector is None:
@@ -62,7 +75,7 @@ class Experiment(object):
         else:
             self.feature_selector.fit(self.data_manager.inputs[SplitTypes.Train], self.data_manager.targets[SplitTypes.Train])
             for split_type in SplitTypes.split_types_collection:
-                self.data_manager.transformed_input[split_type] = self.feature_selector.transform(self.data_manager.inputs[split_type])
+                self.data_manager.transformed_input[self.feature_selector.current_population_index][split_type] = self.feature_selector.transform(self.data_manager.inputs[split_type])
 
     '''
     def get_sum_of_squares(self, split_type):

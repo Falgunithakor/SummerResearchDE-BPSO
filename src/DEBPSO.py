@@ -13,13 +13,13 @@ class DEBPSO(object):
 
         self.first_velocity_matrix = {}
         self.first_population_matrix = {}
-        self.first_local_matrix = {}
-        self.global_row = None
+        self.local_best_matrix = {}
+        self.global_best_row = None
         self.fitness_matrix = {}
 
         self.create_first_velocity()
         self.create_first_population()
-        self.first_local_matrix = self.first_population_matrix
+        self.local_best_matrix = self.first_population_matrix
 
     def create_first_velocity(self):
         velocity = Velocity()
@@ -29,13 +29,16 @@ class DEBPSO(object):
         population = Population(velocity_matrix=self.first_velocity_matrix)
         self.first_population_matrix = population.create_first_population()
 
+    def get_global_row(self):
+        return self.first_population_matrix[np.argmin(self.fitness_matrix)]
+
+
     def fit(self, X, y):
         self.current_population_row = self.first_population_matrix[self.current_population_index]
         self.sel_descriptors_for_curr_population = self.OnlySelectTheOnesColumns()
 
 
     def transform(self, X):
-        self.current_population_index += 1
         return X.T[self.sel_descriptors_for_curr_population].T
 
     def OnlySelectTheOnesColumns(self):

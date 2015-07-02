@@ -10,33 +10,33 @@ class DEBPSO(object):
         self.current_population_row = None
         self.current_population_index = 0
         self.sel_descriptors_for_curr_population = None
-
-        self.first_velocity_matrix = {}
-        self.first_population_matrix = {}
-        self.local_best_matrix = {}
-        self.global_best_row = None
-        self.fitness_matrix = {}
+        self.old_velocity_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
+        self.old_population_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
+        self.velocity_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
+        self.population_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
+        self.local_best_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
+        self.global_best_row = np.zeros((VariableSetting.No_of_Descriptors))
+        self.fitness_matrix = []
 
         self.create_first_velocity()
         self.create_first_population()
-        self.local_best_matrix = self.first_population_matrix
+        self.local_best_matrix = self.population_matrix
 
     def create_first_velocity(self):
         velocity = Velocity()
-        self.first_velocity_matrix = velocity.create_first_velocity()
+        self.velocity_matrix = velocity.create_first_velocity()
 
     def create_first_population(self):
-        population = Population(velocity_matrix=self.first_velocity_matrix)
-        self.first_population_matrix = population.create_first_population()
+        population = Population(velocity_matrix=self.velocity_matrix)
+        self.population_matrix = population.create_first_population()
 
     def get_global_row(self):
-        return self.first_population_matrix[np.argmin(self.fitness_matrix)]
+        return self.population_matrix[np.argmin(self.fitness_matrix)]
 
 
     def fit(self, X, y):
-        self.current_population_row = self.first_population_matrix[self.current_population_index]
+        self.current_population_row = self.population_matrix[self.current_population_index]
         self.sel_descriptors_for_curr_population = self.OnlySelectTheOnesColumns()
-
 
     def transform(self, X):
         return X.T[self.sel_descriptors_for_curr_population].T
@@ -51,23 +51,28 @@ class DEBPSO(object):
         xi = xi.tolist()
         return xi
 
-'''
-    def find_fitness_of_population(self):
-        fitness = None
-        for i in range(0, VariableSetting.Population_Size):
-            fitness[i] = self.find_fitness(self.first_population_matrix[i])
-        return  fitness
+    def find_next_velocity(self):
+        self.old_velocity_matrix = np.copy(self.velocity_matrix)
 
-     # root mean square error of train/validation, Mt, Mv, and Gamma
-    def find_fitness(self, population_array):
-        NoofDescriptor = self.sel_descriptors_for_curr_population.shape[1]
-        M_t = self.data_manager.transformed_input[SplitTypes.Train].shape[0]
-        M_v = self.data_manager.transformed_input[SplitTypes.Valid].shape[0]
-        RMSE_t  = np.sqrt(mean_squared_error(np.ravel(self.data_manager.targets[SplitTypes.Train]), self.predict[SplitTypes.Train]))
-        RMSE_v  = np.sqrt(mean_squared_error(np.ravel(self.data_manager.targets[SplitTypes.Valid]), self.predict[SplitTypes.Valid]))
+        for row_index in range(0, VariableSetting.Population_Size):
+            v_prime = self.de_algorithm()
+            for col_index in range(0, VariableSetting.No_of_Descriptors):
+                c = np.random.random(1)
+                if c[0] >= VariableSetting.Crossover_Rate:
+                    self.velocity_matrix[row_index][col_index] = v_prime[col_index]
 
-        numerator = ((M_t - NoofDescriptor -1) * (RMSE_t)**2) + (M_v * (RMSE_v ** 2))
-        denominator = M_t - (self.gamma * NoofDescriptor) - 1 + M_v
 
-        return numerator/denominator
-'''
+
+    def de_algorithm(self):
+        random_indexes = np.random.choice(VariableSetting.Population_Size, 3, replace=False)
+        #print("random ", random_indexes)
+        v_prime = np.zeros((VariableSetting.No_of_Descriptors))
+        V1 = self.old_velocity_matrix[random_indexes[0]]
+        V2 = self.old_velocity_matrix[random_indexes[1]]
+        V3 = self.old_velocity_matrix[random_indexes[2]]
+        for vector_index in range(0, VariableSetting.No_of_Descriptors):
+            v_prime[vector_index] = V1[vector_index] +  VariableSetting.Scaling_Factor * (V2[vector_index]- V3[vector_index])
+
+        return v_prime
+
+

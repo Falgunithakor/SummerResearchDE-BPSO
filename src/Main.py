@@ -58,4 +58,20 @@ For each x in feature_list  # DE-BPSO, GA, DE, PSO, ….
     9)	revise the local best matrix if needed
     10)	revise the best global row if needed
     11)	go back to 6
-'''
+
+Velocity Alogrithm
+    1) oldVeclocity = Velocity
+    2) for (i=0; i<50; i++)
+       {
+          V1, V2, V3 = self.SelectThreeDistincVectorsFromTheOldVelocity()
+          for k = 0; i< 385; i++
+              V[k]' = V1[k] + F*(V2[k]- V3[k])
+          for (j=0; j < 385; j++)
+          {
+             c = get a random number between 0 and 1
+             if (c >= CR)
+                 Velocity[i][j] =  V[j]'
+          }
+       }
+
+   '''

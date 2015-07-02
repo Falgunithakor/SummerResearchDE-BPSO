@@ -16,3 +16,6 @@ class ReadData(object):
         variables = FileManager.load_variable_file(variable_file_path)
         VariableSetting.set_variables(variables, no_of_drugs, no_of_descriptors)
         return loaded_data
+
+    def getTwoDecPoint(x):
+        return float("%.2f"%x)

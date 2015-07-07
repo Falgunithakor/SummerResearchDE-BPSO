@@ -9,7 +9,7 @@ class FileManager(object):
         loaded_file = np.genfromtxt(file_path,delimiter=',')
         return loaded_file
 
-
+    @staticmethod
     def load_variable_file(file_path):
          loaded_file = np.loadtxt(file_path, delimiter=',',  dtype={'names': ('Name', 'Value'),  'formats': ('S1','S10')})
          return loaded_file

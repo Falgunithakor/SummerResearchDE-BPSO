@@ -17,4 +17,5 @@ Crossover_Rate_CR=,0.7
 Feature_selection_algorithm=,DEBPSO
 Model=,SVM
 Iteration=,1
+Population_selective_section=,0.7
 

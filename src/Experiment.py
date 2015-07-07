@@ -21,6 +21,8 @@ class Experiment(object):
         # Appropriate for EA to obtain predictive QSAR models - as per paper
         self.gamma = 3.3
 
+        self.alpha_scaling_factor = (VariableSetting.Initial_alpha - VariableSetting.Ending_alpha)/ VariableSetting.Generation
+        self.current_alpha = VariableSetting.Initial_alpha + self.alpha_scaling_factor
         '''
         self.sum_of_squares_values = {}
         '''
@@ -35,16 +37,12 @@ class Experiment(object):
 
         numerator = ((M_t - NoofDescriptor -1) * (RMSE_t)**2) + (M_v * (RMSE_v ** 2))
         denominator = M_t - (self.gamma * NoofDescriptor) - 1 + M_v
-
         return numerator/denominator
 
     def fit_and_evaluate_model(self, data_inputs):
-        #print(data_inputs)
         self.model.fit(data_inputs[SplitTypes.Train], np.ravel(self.data_manager.targets[SplitTypes.Train]))
         for split_type in SplitTypes.split_types_collection:
-            #print("data inputs - row", self.feature_selector.current_population_index, split_type , data_inputs[split_type])
             self.predict[split_type] = self.model.predict(data_inputs[split_type])
-
             self.r2_values[split_type] = self.model.score(data_inputs[split_type], (self.data_manager.targets[split_type]))
             '''
             self.sum_of_squares_values[split_type] = (
@@ -54,17 +52,6 @@ class Experiment(object):
         self.population_r2_values[self.feature_selector.current_population_index][0] = self.model.score(data_inputs[SplitTypes.Train], (self.data_manager.targets[SplitTypes.Train]))
         self.population_r2_values[self.feature_selector.current_population_index][1] = self.model.score(data_inputs[SplitTypes.Valid], (self.data_manager.targets[SplitTypes.Valid]))
         self.population_r2_values[self.feature_selector.current_population_index][2] = self.model.score(data_inputs[SplitTypes.Test], (self.data_manager.targets[SplitTypes.Test]))
-
-        '''
-        print("Row", self.feature_selector.current_population_index,
-            "R2 Train ", ReadData.getTwoDecPoint(self.model.score(data_inputs[SplitTypes.Train], (self.data_manager.targets[SplitTypes.Train])))
-        ,"R2 Test ", ReadData.getTwoDecPoint(self.model.score(data_inputs[SplitTypes.Test], (self.data_manager.targets[SplitTypes.Test])))
-        ,"R2 Valid ", ReadData.getTwoDecPoint(self.model.score(data_inputs[SplitTypes.Valid], (self.data_manager.targets[SplitTypes.Valid])))
-        )
-        '''
-
-        #print("split type r2", (self.r2_values))
-        #print("population_r2_values predict",  self.population_r2_values)
         self.feature_selector.fitness_matrix.append(self.find_fitness())
         #result of this function must go to a file, includes co-efficients, model name, r2 train, r2 validate, r2 test, fitness value & q2 values
 
@@ -75,11 +62,13 @@ class Experiment(object):
         # loop thru all population rows and generate fitness
         for iteration in range(1, VariableSetting.Iteration + 1):
             print("iteration loop",iteration)
+            self.current_alpha = VariableSetting.Initial_alpha + self.alpha_scaling_factor
             for generation in range(1, VariableSetting.Generation + 1):
                 print("generation loop", generation)
+                self.current_alpha = self.current_alpha - self.alpha_scaling_factor
                 self.feature_selector = DEBPSO()
                 self.population_r2_values = np.zeros((VariableSetting.Population_Size, 3))
-                for population_idx in range(0, VariableSetting.Population_Size):
+                for population_idx in range(0, VariableSetting.Population_Size ):
                     #population matrix swatch
                     self.feature_selector.current_population_index = population_idx
                     if self.feature_selector is None:
@@ -89,14 +78,10 @@ class Experiment(object):
                         data_inputs = self.data_manager.transformed_input
                     self.fit_and_evaluate_model(data_inputs)
 
-                    #old population and new population
-
                 self.feature_selector.global_best_row = self.feature_selector.get_global_row()
                 self.feature_selector.find_next_velocity()
-                for i in range(0, VariableSetting.Population_Size):
-                    for j in range(0, VariableSetting.No_of_Descriptors):
-                        if self.feature_selector.velocity_matrix[i][j] != self.feature_selector.old_velocity_matrix[i][j]:
-                            print("new ", self.feature_selector.velocity_matrix[i][j], "old",  self.feature_selector.old_velocity_matrix[i][j])
+                #old population and new population
+                self.feature_selector.population_matrix = self.feature_selector.generate_population_matrix(self.current_alpha)
                 self.feature_selector.current_population_index = 0
 
     def run_feature_selection(self):

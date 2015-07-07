@@ -9,7 +9,9 @@ class DEBPSO(object):
     def __init__(self):
         self.current_population_row = None
         self.current_population_index = 0
+
         self.sel_descriptors_for_curr_population = None
+        self.selective_section = int(VariableSetting.Population_Size * VariableSetting.Population_Selective_Section)
         self.old_velocity_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
         self.old_population_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
         self.velocity_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
@@ -74,5 +76,13 @@ class DEBPSO(object):
             v_prime[vector_index] = V1[vector_index] +  VariableSetting.Scaling_Factor * (V2[vector_index]- V3[vector_index])
 
         return v_prime
+
+    def generate_population_matrix(self, current_alpha):
+        self.old_population_matrix = np.copy(self.population_matrix)
+
+        for row_index in range(0, self.selective_section ):
+            for col_index in range(0, VariableSetting.No_of_Descriptors):
+                if  current_alpha< Velocity[row_index][col_index] and Velocity[row_index][col_index] <= .5* (1+ current_alpha):
+                    self.population_matrix[row_index][col_index] = local_matrix[i,j]
 
 

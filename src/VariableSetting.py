@@ -23,6 +23,7 @@ class VariableSetting(object):
     Feature_Selection_Algorithm = 'DEBPSO'
     Model = 'SVM'
     Iteration = 1
+    Population_Selective_Section = 0.7
 
 
     @staticmethod
@@ -46,5 +47,6 @@ class VariableSetting(object):
         VariableSetting.Feature_Selection_Algorithm = str(variables[16][1], encoding='ascii')      # = DEBPSO
         VariableSetting.Model = str(variables[17][1], encoding='ascii')                  # = SVM
         VariableSetting.Iteration = int(variables[18][1])                       # = 1
+        VariableSetting.Population_Selective_Section = float(variables[19][1])
         VariableSetting.No_of_Drugs = int(no_of_drugs)                      # = 91
         VariableSetting.No_of_Descriptors = int(no_of_descriptors)          # = 385

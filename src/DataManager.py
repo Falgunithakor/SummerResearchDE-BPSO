@@ -32,6 +32,7 @@ class DataManager(object):
             SplitTypes.Train: self.data[test_index:train_index, :],
             SplitTypes.Valid: self.data[train_index:, :],
             SplitTypes.Test: self.data[0:test_index, :]
+
         }
 
         for split_type in SplitTypes.split_types_collection:

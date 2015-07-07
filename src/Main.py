@@ -75,3 +75,19 @@ Velocity Alogrithm
        }
 
    '''
+
+'''
+Lets create the second population
+
+population = old population
+for (i=0; i< 50; i++)
+      for (j =0; j< 385; j++)
+      {
+        if alpha < V[i,j] and V[i,j] <= .5* (1+ alpha)
+              X[i,j] = local_matrix[i,j]
+        else i (.5) * (1+alpha) < V[i,j] and V[i, j] < (1 - beta)
+             X[i, j] = globalrow[j]
+        else if (1-beta) < v[i,j] and V[i,j] <= 1)
+            X[i,j] = 1 - X[i,j]
+     }
+'''

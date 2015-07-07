@@ -209,19 +209,16 @@ class TestExperiment(unittest.TestCase):
 
         print("lowest fitness index", np.min(experiment.feature_selector.fitness_matrix), np.argmin(experiment.feature_selector.fitness_matrix))
 
-        for i in range(0, VariableSetting.Population_Size):
-            print("Old Velocity", ReadData.getTwoDecPoint(experiment.feature_selector.old_velocity_matrix[i][1]), "\t"
-                , ReadData.getTwoDecPoint(experiment.feature_selector.old_velocity_matrix[i][2]), "\t"
-                ,ReadData.getTwoDecPoint( experiment.feature_selector.old_velocity_matrix[i][3]), "\t"
-                ,ReadData.getTwoDecPoint( experiment.feature_selector.old_velocity_matrix[i][4]), "\t"
-                , ReadData.getTwoDecPoint(experiment.feature_selector.old_velocity_matrix[i][5]))
 
-            print("New Velocity",ReadData.getTwoDecPoint( experiment.feature_selector.velocity_matrix[i][1]), "\t"
-                , ReadData.getTwoDecPoint(experiment.feature_selector.velocity_matrix[i][2]), "\t"
-                ,ReadData.getTwoDecPoint( experiment.feature_selector.velocity_matrix[i][3]), "\t"
-                , ReadData.getTwoDecPoint(experiment.feature_selector.velocity_matrix[i][4]), "\t"
-                , ReadData.getTwoDecPoint(experiment.feature_selector.velocity_matrix[i][5]))
-            print()
+        for i in range(0, VariableSetting.Population_Size):
+            print("population row ", i, "Fitness value ",experiment.feature_selector.fitness_matrix[i],
+                  "r2_values",
+                  ReadData.getTwoDecPoint(experiment.population_r2_values[i][0]),
+                  ReadData.getTwoDecPoint(experiment.population_r2_values[i][1]),
+                  ReadData.getTwoDecPoint(experiment.population_r2_values[i][2])
+               #   ReadData.getTwoDecPoint(experiment.r2_values[SplitTypes.Train][i])
+            )
+        print()
 
 
 if __name__ == '__main__':

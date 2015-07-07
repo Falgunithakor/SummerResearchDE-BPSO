@@ -63,13 +63,13 @@ class Experiment(object):
         for iteration in range(1, VariableSetting.Iteration + 1):
             print("iteration loop",iteration)
             self.current_alpha = VariableSetting.Initial_alpha + self.alpha_scaling_factor
+            #we can put population initialization here
             for generation in range(1, VariableSetting.Generation + 1):
                 print("generation loop", generation)
                 self.current_alpha = self.current_alpha - self.alpha_scaling_factor
-                self.feature_selector = DEBPSO()
                 self.population_r2_values = np.zeros((VariableSetting.Population_Size, 3))
+                self.feature_selector.fitness_matrix = []
                 for population_idx in range(0, VariableSetting.Population_Size ):
-                    #population matrix swatch
                     self.feature_selector.current_population_index = population_idx
                     if self.feature_selector is None:
                         data_inputs = self.data_manager.inputs
@@ -77,12 +77,20 @@ class Experiment(object):
                         self.run_feature_selection()
                         data_inputs = self.data_manager.transformed_input
                     self.fit_and_evaluate_model(data_inputs)
-
+                #after each 50 population row loop
+                self.feature_selector.local_best_matrix = self.feature_selector.get_local_best_matrix()
                 self.feature_selector.global_best_row = self.feature_selector.get_global_row()
                 self.feature_selector.find_next_velocity()
-                #old population and new population
-                self.feature_selector.population_matrix = self.feature_selector.generate_population_matrix(self.current_alpha)
+                self.feature_selector.generate_population_matrix(self.current_alpha)
                 self.feature_selector.current_population_index = 0
+
+                print("lowest fitness index", np.min(self.feature_selector.fitness_matrix), np.argmin(self.feature_selector.fitness_matrix))
+
+                for pi in range (0, 385):
+                    if self.feature_selector.global_best_row[pi] == 1:
+                        print(pi)
+
+
 
     def run_feature_selection(self):
         if self.feature_selector is None:

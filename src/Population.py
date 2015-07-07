@@ -23,3 +23,13 @@ class Population(object):
         low_values_indices = self.velocity_matrix <= VariableSetting.Descriptor_Selection_Probability  # Where values are low
         self.population_matrix[low_values_indices] = 1
         return self.population_matrix
+
+    @staticmethod
+    def create_valid_random_population_row(velocity_row):
+        population_row = np.zeros( VariableSetting.No_of_Descriptors)
+        #array_np = numpy.asarray(array)
+
+        low_values_indices = velocity_row <= VariableSetting.Descriptor_Selection_Probability  # Where values are low
+        population_row[low_values_indices] = 1
+        return population_row
+

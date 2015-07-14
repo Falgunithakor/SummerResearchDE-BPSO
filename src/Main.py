@@ -1,6 +1,8 @@
-from sklearn import svm
+from sklearn import svm, linear_model
+from sklearn.ensemble import RandomForestRegressor
 from src.DEBPSO import DEBPSO
 from src.Experiment import Experiment
+from src.Normalizer import ZeroOneMinMaxNormalizer
 from src.Population import Population
 from src.ReadData import ReadData
 
@@ -13,13 +15,10 @@ from src.Velocity import Velocity
 read_data = ReadData()
 loaded_data = read_data.read_data_and_set_variable_settings("../Dataset/00-91-Drugs-All-In-One-File.csv", "../Dataset/VariableSetting.csv")
 
-#output_filename = FileManager.create_output_file()
+output_filename = FileManager.create_output_file()
 
-#rescaling_normalizer = RescalingNormalizer()
-#scikit_normalizer = ScikitNormalizer()
-#data_manager = DataManager(normalizer=scikit_normalizer)
-
-data_manager = DataManager(normalizer=None)
+zero_one_normalizer = ZeroOneMinMaxNormalizer()
+data_manager = DataManager(normalizer=zero_one_normalizer)
 data_manager.set_data(loaded_data)
 data_manager.split_data_into_train_valid_test_sets()
 
@@ -32,9 +31,13 @@ if VariableSetting.Feature_Selection_Algorithm == 'GA' and VariableSetting.Model
 elif VariableSetting.Feature_Selection_Algorithm == 'DEBPSO' and VariableSetting.Model == 'SVM':
     feature_selection_algo = DEBPSO()
     model = svm.SVR()
+elif VariableSetting.Feature_Selection_Algorithm == 'DEBPSO' and VariableSetting.Model == 'MLR':
+    feature_selection_algo = DEBPSO()
+    model = linear_model.LinearRegression()
+
 #every other combination of feature and models are done same way
 
-experiment = Experiment(data_manager, model, feature_selection_algo)
+experiment = Experiment(data_manager, model, feature_selection_algo, output_filename)
 experiment.run_experiment()
 
 

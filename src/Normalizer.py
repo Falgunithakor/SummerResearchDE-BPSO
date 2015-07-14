@@ -1,4 +1,6 @@
+import numpy as np
 from math import sqrt
+
 from sklearn.preprocessing import Normalizer
 
 __author__ = 'FalguniT'
@@ -41,3 +43,18 @@ class RescalingNormalizer(object):
 
     return TrainX, ValidateX, TestX
     '''
+
+    '''
+
+    '''
+
+class ZeroOneMinMaxNormalizer(object):
+    def fit(self, data):
+        pass
+
+    def transform(self, data):
+        min_data = np.min(data)
+        max_data = np.max(data)
+        diff_data = max_data - min_data
+        normlized_data  = (data - min_data) / diff_data
+        return  normlized_data

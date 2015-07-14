@@ -19,9 +19,7 @@ class DataManager(object):
         self.num_columns = result.shape[1]
         self.num_input_columns = self.num_columns - 1
         self.data = result
-        if self.normalizer is not None:
-            self.normalizer.fit(self.data[:, 0:self.num_input_columns])
-            self.data[:, 0:self.num_input_columns] = self.normalizer.transform(self.data[:, 0:self.num_input_columns])
+
 
     def split_data_into_train_valid_test_sets(self):
         # no of rows = no of drugs
@@ -38,6 +36,9 @@ class DataManager(object):
         for split_type in SplitTypes.split_types_collection:
             self.inputs[split_type] = self.datum[split_type][:, 0:self.num_input_columns]
             self.targets[split_type] = self.datum[split_type][:, self.num_input_columns:self.num_columns].ravel()
+            if self.normalizer is not None:
+                self.normalizer.fit(self.inputs[split_type][:, 0:self.num_input_columns])
+                self.inputs[split_type][:, 0:self.num_input_columns] = self.normalizer.transform(self.inputs[split_type][:, 0:self.num_input_columns])
 
 
 

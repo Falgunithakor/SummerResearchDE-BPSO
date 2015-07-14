@@ -1,3 +1,4 @@
+import sys
 from src.VariableSetting import VariableSetting
 from src.Population import Population
 from src.Velocity import Velocity
@@ -20,7 +21,7 @@ class DEBPSO(object):
         self.local_best_matrix = np.zeros((VariableSetting.Population_Size, VariableSetting.No_of_Descriptors))
         self.local_best_fitness_matrix = np.zeros(VariableSetting.Population_Size)
         self.global_best_row = np.zeros((VariableSetting.No_of_Descriptors))
-        self.global_best_row_fitness = np.zeros(VariableSetting.Population_Size)
+        self.global_best_row_fitness = sys.maxsize
 
         self.create_first_velocity()
         self.create_first_population()
@@ -34,32 +35,35 @@ class DEBPSO(object):
     def create_first_population(self):
         population = Population(velocity_matrix=self.velocity_matrix)
         self.population_matrix = population.create_first_population()
+        self.local_best_matrix = np.copy(self.population_matrix)
 
+    def initialize_local_best_fitness_for_first_generation(self):
+        self.local_best_fitness_matrix = np.copy(self.fitness_matrix)
 
     def get_local_best_matrix(self):
-        if self.local_best_fitness_matrix.shape[0] == 0 :
-            self.local_best_matrix = np.copy(self.population_matrix)
-            self.local_best_fitness_matrix = np.copy(self.fitness_matrix)
-
-        else:
-            for i in range(0, VariableSetting.Population_Size):
-                if self.fitness_matrix[i] < self.local_best_fitness_matrix[i]:
-                    self.local_best_matrix[i] = self.population_matrix[i]
-                    self.local_best_fitness_matrix[i] = self.fitness_matrix[i]
+        for i in range(0, VariableSetting.Population_Size):
+            if self.fitness_matrix[i] < self.local_best_fitness_matrix[i]:
+                self.local_best_matrix[i] = np.copy(self.population_matrix[i])
+                self.local_best_fitness_matrix[i] = self.fitness_matrix[i]
         return self.local_best_matrix
 
 
     def get_global_row(self):
-        if self.global_best_row.shape[0] == 0 :
-            self.global_best_row  = self.population_matrix[np.argmin(self.fitness_matrix)]
-            self.global_best_row_fitness = np.min(self.fitness_matrix)
-        else:
+        '''
+
+        if self.global_best_row.shape[0] == 0:
             min_fitness_index = np.argmin(self.fitness_matrix)
-            min_curr_fitness = self.fitness_matrix[min_fitness_index]
-            if self.global_best_row_fitness > min_curr_fitness:
-                self.global_best_row = np.copy(self.population_matrix[min_fitness_index])
-                self.global_best_row_fitness = self.fitness_matrix[min_fitness_index]
-        return  self.global_best_row
+            self.global_best_row = np.copy(self.population_matrix[min_fitness_index])
+            self.global_best_row_fitness = self.fitness_matrix[min_fitness_index]
+            print("self.global_best_row_fitness", self.global_best_row_fitness)
+        else:
+        '''
+        min_fitness_index = np.argmin(self.fitness_matrix)
+        min_curr_fitness = self.fitness_matrix[min_fitness_index]
+        if self.global_best_row_fitness > min_curr_fitness:
+            self.global_best_row = np.copy(self.population_matrix[min_fitness_index])
+            self.global_best_row_fitness = self.fitness_matrix[min_fitness_index]
+        return self.global_best_row
 
     def fit(self, X, y):
         self.current_population_row = self.population_matrix[self.current_population_index]

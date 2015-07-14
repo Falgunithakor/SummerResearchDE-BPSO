@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error
+from src.FileManager import FileManager
 from src.ReadData import ReadData
 from src.DEBPSO import DEBPSO
 from  src.SplitTypes import SplitTypes
@@ -9,7 +10,7 @@ from src.VariableSetting import VariableSetting
 
 class Experiment(object):
 
-    def __init__(self, data_manager, model, feature_selection_algo):
+    def __init__(self, data_manager, model, feature_selection_algo, output_file = "test.csv"):
         self.model = model
         self.feature_selector = feature_selection_algo
         self.data_manager = data_manager
@@ -26,6 +27,7 @@ class Experiment(object):
         '''
         self.sum_of_squares_values = {}
         '''
+        self.output_filename = output_file
     # root mean square error of train/validation, Mt, Mv, and Gamma
     def find_fitness(self):
         #print("predict value comparison", self.feature_selector.current_population_index , np.ravel(self.data_manager.targets[SplitTypes.Train]), self.predict[SplitTypes.Train] )
@@ -69,6 +71,7 @@ class Experiment(object):
                 self.current_alpha = self.current_alpha - self.alpha_scaling_factor
                 self.population_r2_values = np.zeros((VariableSetting.Population_Size, 3))
                 self.feature_selector.fitness_matrix = []
+
                 for population_idx in range(0, VariableSetting.Population_Size ):
                     self.feature_selector.current_population_index = population_idx
                     if self.feature_selector is None:
@@ -77,20 +80,34 @@ class Experiment(object):
                         self.run_feature_selection()
                         data_inputs = self.data_manager.transformed_input
                     self.fit_and_evaluate_model(data_inputs)
-                #after each 50 population row loop
+
+                    FileManager.write_model_in_file(self.output_filename
+                                                    , self.feature_selector.sel_descriptors_for_curr_population
+                                                    , self.feature_selector.fitness_matrix[population_idx]
+                                                    , type(self.model)
+                                                    , self.population_r2_values[population_idx][0]
+                                                    , self.population_r2_values[population_idx][1]
+                                                    , self.population_r2_values[population_idx][2]
+                                                    )
+
                 self.feature_selector.local_best_matrix = self.feature_selector.get_local_best_matrix()
+                if generation == 1:
+                    self.feature_selector.initialize_local_best_fitness_for_first_generation()
                 self.feature_selector.global_best_row = self.feature_selector.get_global_row()
+                #self.print_ones_in_array(self.feature_selector.global_best_row)
                 self.feature_selector.find_next_velocity()
                 self.feature_selector.generate_population_matrix(self.current_alpha)
                 self.feature_selector.current_population_index = 0
 
-                print("lowest fitness index", np.min(self.feature_selector.fitness_matrix), np.argmin(self.feature_selector.fitness_matrix))
+                #print("lowest fitness index", np.min(self.feature_selector.fitness_matrix), np.argmin(self.feature_selector.fitness_matrix))
+                print("Global Row fitness", self.feature_selector.global_best_row_fitness )
 
-                for pi in range (0, 385):
-                    if self.feature_selector.global_best_row[pi] == 1:
-                        print(pi)
-
-
+    #-------------------------------------------------------------------------------------------------------------------
+    def print_ones_in_array(self, array):
+        print("Print ones")
+        for pi in range (0, 385):
+            if array[pi] == 1:
+                print(pi)
 
     def run_feature_selection(self):
         if self.feature_selector is None:

@@ -46,12 +46,7 @@ class Experiment(object):
         for split_type in SplitTypes.split_types_collection:
             self.predict[split_type] = self.model.predict(data_inputs[split_type])
             self.r2_values[split_type] = self.model.score(data_inputs[split_type], (self.data_manager.targets[split_type]))
-            '''
-            self.sum_of_squares_values[split_type] = (
-                np.sum(((self.data_manager.targets[split_type] - self.predict[split_type]) ** 2)))
 
-
-        '''
 
         #testing area
         #r2_val = self.model.score(data_inputs[SplitTypes.Test], (self.data_manager.targets[SplitTypes.Test]))
@@ -109,7 +104,7 @@ class Experiment(object):
                 self.population_r2_values = np.zeros((VariableSetting.Population_Size, 3))
                 self.feature_selector.fitness_matrix = []
 
-                for population_idx in range(0, VariableSetting.Population_Size ):
+                for population_idx in range(0, VariableSetting.Population_Size):
                     self.feature_selector.current_population_index = population_idx
                     if self.feature_selector is None:
                         data_inputs = self.data_manager.inputs
@@ -118,15 +113,16 @@ class Experiment(object):
                         data_inputs = self.data_manager.transformed_input
                     self.fit_and_evaluate_model(data_inputs)
                     #print("Row", population_idx, "Descriptor", self.feature_selector.sel_descriptors_for_curr_population, "Test r2 value ", self.population_r2_values[population_idx][2])
-                    FileManager.write_model_in_file(self.output_filename
-                                                    , self.feature_selector.sel_descriptors_for_curr_population
-                                                    , self.feature_selector.fitness_matrix[population_idx]
-                                                    , type(self.model)
-                                                    , self.population_r2_values[population_idx][0]
-                                                    , self.population_r2_values[population_idx][1]
-                                                    , self.population_r2_values[population_idx][2]
+                    if(self.population_r2_values[population_idx][2] >= VariableSetting.Required_r2_Test
+                        and self.population_r2_values[population_idx][1] >= VariableSetting.Required_r2_Valid and
+                        self.population_r2_values[population_idx][0] >= VariableSetting.Required_r2_Train):
+                        FileManager.write_model_in_file(self.output_filename
+                                                        , self.feature_selector.sel_descriptors_for_curr_population
+                                                        , self.feature_selector.fitness_matrix[population_idx]
+                                                        , self.population_r2_values[population_idx][0]
+                                                        , self.population_r2_values[population_idx][1]
+                                                        , self.population_r2_values[population_idx][2]
                                                     )
-
 
                 self.feature_selector.local_best_matrix = self.feature_selector.get_local_best_matrix()
                 if generation == 1:
@@ -149,7 +145,6 @@ class Experiment(object):
 
     def run_feature_selection(self):
         if self.feature_selector is None:
-            print("none")
             self.data_manager.run_default_feature_selection()
         else:
             self.feature_selector.fit(self.data_manager.inputs[SplitTypes.Train], self.data_manager.targets[SplitTypes.Train])

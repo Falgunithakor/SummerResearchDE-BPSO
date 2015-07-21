@@ -45,7 +45,6 @@ class VariableSetting(object):
         VariableSetting.Scaling_Factor = float(variables[14][1])                     # = 0.15
         VariableSetting.Crossover_Rate = float(variables[15][1]       )            # = 0.15
         VariableSetting.Feature_Selection_Algorithm = str(variables[16][1], encoding='ascii')      # = DEBPSO
-        print(variables[17][1])
         VariableSetting.Model = str(variables[17][1], encoding='ascii')                  # = SVM
         VariableSetting.Iteration = int(variables[18][1])                       # = 1
         VariableSetting.Population_Selective_Section = float(variables[19][1])

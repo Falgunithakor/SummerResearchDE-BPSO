@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn import svm, linear_model
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.linear_model import RandomizedLasso, LinearRegression, Lasso
@@ -16,10 +17,7 @@ from src.VariableSetting import VariableSetting
 from src.Velocity import Velocity
 
 read_data = ReadData()
-loaded_data = read_data.read_data_and_set_variable_settings("../Dataset/00-91-Drugs-All-In-One-File.csv", "../Dataset/VariableSetting.csv")
-
-output_filename = FileManager.create_output_file()
-
+loaded_data = read_data.read_data_and_set_variable_settings("../Dataset/MergedDataset.csv", "../Dataset/VariableSetting.csv")
 
 #normalizer = ZeroOneMinMaxNormalizer()
 #normalizer = MinMaxScaler()
@@ -28,7 +26,8 @@ data_manager = DataManager(normalizer=normalizer)
 data_manager.set_data(loaded_data)
 data_manager.split_data_into_train_valid_test_sets()
 
-#data_manager.feature_selector = debpso
+
+
 #set feature selection algorithm based on variable settings
 feature_selection_algo = None
 if VariableSetting.Feature_Selection_Algorithm == 'DEBPSO':

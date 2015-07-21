@@ -1,8 +1,11 @@
 from sklearn import svm, linear_model
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.linear_model import RandomizedLasso, LinearRegression
+from sklearn.svm import LinearSVC
 from src.DEBPSO import DEBPSO
 from src.Experiment import Experiment
 from src.Normalizer import ZeroOneMinMaxNormalizer
+from sklearn.preprocessing import MinMaxScaler
 from src.Population import Population
 from src.ReadData import ReadData
 
@@ -17,25 +20,35 @@ loaded_data = read_data.read_data_and_set_variable_settings("../Dataset/00-91-Dr
 
 output_filename = FileManager.create_output_file()
 
-zero_one_normalizer = ZeroOneMinMaxNormalizer()
-data_manager = DataManager(normalizer=zero_one_normalizer)
+
+#normalizer = ZeroOneMinMaxNormalizer()
+#normalizer = MinMaxScaler()
+normalizer = None
+data_manager = DataManager(normalizer=normalizer)
 data_manager.set_data(loaded_data)
 data_manager.split_data_into_train_valid_test_sets()
 
 #data_manager.feature_selector = debpso
+#set feature selection algorithm based on variable settings
 feature_selection_algo = None
-
-if VariableSetting.Feature_Selection_Algorithm == 'GA' and VariableSetting.Model == 'SVM':
-    #feature_selection_algo = GA()
-    model = svm.SVR()
-elif VariableSetting.Feature_Selection_Algorithm == 'DEBPSO' and VariableSetting.Model == 'SVM':
+if VariableSetting.Feature_Selection_Algorithm == 'DEBPSO':
     feature_selection_algo = DEBPSO()
-    model = svm.SVR()
-elif VariableSetting.Feature_Selection_Algorithm == 'DEBPSO' and VariableSetting.Model == 'MLR':
-    feature_selection_algo = DEBPSO()
-    model = linear_model.LinearRegression()
+if VariableSetting.Feature_Selection_Algorithm == 'LinearSVC':
+    feature_selection_algo = LinearSVC()
 
-#every other combination of feature and models are done same way
+#set model based on variable settings
+if VariableSetting.Model == 'SVM':
+    model = svm.SVR()
+elif VariableSetting.Model == 'BayesianRidge':
+    model = linear_model.BayesianRidge()
+elif VariableSetting.Model == 'GradientBoostingRegressor':
+    model = GradientBoostingRegressor()
+elif VariableSetting.Model == 'RandomizedLasso':
+    model = RandomizedLasso()
+elif VariableSetting.Model == 'LinearRegression':
+    model = LinearRegression()
+
+output_filename = FileManager.create_output_file(type(feature_selection_algo).__name__, type(model).__name__)
 
 experiment = Experiment(data_manager, model, feature_selection_algo, output_filename)
 experiment.run_experiment()

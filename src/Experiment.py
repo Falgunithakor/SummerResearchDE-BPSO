@@ -37,9 +37,9 @@ class Experiment(object):
         RMSE_t  = np.sqrt(mean_squared_error(np.ravel(self.data_manager.targets[SplitTypes.Train]), self.predict[SplitTypes.Train]))
         RMSE_v  = np.sqrt(mean_squared_error(np.ravel(self.data_manager.targets[SplitTypes.Valid]), self.predict[SplitTypes.Valid]))
 
-        numerator = ((M_t - NoofDescriptor -1) * (RMSE_t)**2) + (M_v * (RMSE_v ** 2))
+        numerator = ((M_t - NoofDescriptor -1) * (RMSE_t**2)) + (M_v * (RMSE_v ** 2))
         denominator = M_t - (self.gamma * NoofDescriptor) - 1 + M_v
-        return numerator/denominator
+        return (numerator/denominator)**2
 
     def fit_and_evaluate_model(self, data_inputs):
         self.model.fit(data_inputs[SplitTypes.Train], np.ravel(self.data_manager.targets[SplitTypes.Train]))
@@ -49,13 +49,50 @@ class Experiment(object):
             '''
             self.sum_of_squares_values[split_type] = (
                 np.sum(((self.data_manager.targets[split_type] - self.predict[split_type]) ** 2)))
-            '''
+
+
+        '''
+
+        #testing area
+        #r2_val = self.model.score(data_inputs[SplitTypes.Test], (self.data_manager.targets[SplitTypes.Test]))
+        #sst_val = self.calculate_sumofsquaretotal((self.data_manager.targets[SplitTypes.Test]))
+        #ssres = self.calculate_sumofsquareofresidual((self.data_manager.targets[SplitTypes.Test]), self.predict[SplitTypes.Test])
+        #calculate_r2 = self.calculate_r2(sst_val, ssres)
+        #print("X", X)
+        #print("Target value", Y)
+        #print("Actual Data ", data_inputs[SplitTypes.Test])
+        #print("Target Data", self.data_manager.targets[SplitTypes.Test])
+        #print("Predict", self.predict[SplitTypes.Test])
+
+        #print("SST", sst_val)
+        #print("SSres ", ssres)
+        #print("Calculated R2", calculate_r2)
+
+
+        #end - testing area
+
 
         self.population_r2_values[self.feature_selector.current_population_index][0] = self.model.score(data_inputs[SplitTypes.Train], (self.data_manager.targets[SplitTypes.Train]))
         self.population_r2_values[self.feature_selector.current_population_index][1] = self.model.score(data_inputs[SplitTypes.Valid], (self.data_manager.targets[SplitTypes.Valid]))
         self.population_r2_values[self.feature_selector.current_population_index][2] = self.model.score(data_inputs[SplitTypes.Test], (self.data_manager.targets[SplitTypes.Test]))
         self.feature_selector.fitness_matrix.append(self.find_fitness())
         #result of this function must go to a file, includes co-efficients, model name, r2 train, r2 validate, r2 test, fitness value & q2 values
+
+    def calculate_sumofsquaretotal(self, actual_target_values):
+        sst = 0
+        y_bar = np.mean(actual_target_values)
+        for i in range(actual_target_values.shape[0]):
+            sst = sst + float((actual_target_values[i] - y_bar) ** 2)
+        return sst
+
+    def calculate_sumofsquareofresidual(self, actual_target_values, predicted_target_value):
+        ssres = 0
+        for i in range(actual_target_values.shape[0]):
+            ssres = ssres + ((actual_target_values[i]-predicted_target_value[i])**2)
+        return ssres
+
+    def calculate_r2(self, sst, ssres):
+        return 1 - (ssres / sst)
 
     def run_experiment(self):
         # initialize velocity and population
@@ -80,7 +117,7 @@ class Experiment(object):
                         self.run_feature_selection()
                         data_inputs = self.data_manager.transformed_input
                     self.fit_and_evaluate_model(data_inputs)
-
+                    #print("Row", population_idx, "Descriptor", self.feature_selector.sel_descriptors_for_curr_population, "Test r2 value ", self.population_r2_values[population_idx][2])
                     FileManager.write_model_in_file(self.output_filename
                                                     , self.feature_selector.sel_descriptors_for_curr_population
                                                     , self.feature_selector.fitness_matrix[population_idx]
@@ -89,6 +126,7 @@ class Experiment(object):
                                                     , self.population_r2_values[population_idx][1]
                                                     , self.population_r2_values[population_idx][2]
                                                     )
+
 
                 self.feature_selector.local_best_matrix = self.feature_selector.get_local_best_matrix()
                 if generation == 1:

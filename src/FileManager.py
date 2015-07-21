@@ -15,9 +15,10 @@ class FileManager(object):
          return loaded_file
 
     @staticmethod
-    def create_output_file(feature_selection_alogorithm ='DEBPSO', model = 'SVR'):
+    def create_output_file(feature_selection_algorithm ='DEBPSO', model = 'SVR'):
         timestamp = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
-        file_name = "../Dataset/{}-{}-{}.csv".format(feature_selection_alogorithm, model,timestamp)
+        file_name = "../Dataset/{}-{}-{}.csv".format(feature_selection_algorithm, model,timestamp)
+        print(file_name)
         with open(file_name,"a") as f_handle:
             f_handle.write('Descriptor ID, Fitness, Model, R2_Train, R2Pred_Validation, R2Pred_Test\n')
         #file_header.tofile(file_name, sep=',', format='%s', newline='\n')

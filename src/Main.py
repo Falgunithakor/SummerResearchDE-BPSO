@@ -1,6 +1,6 @@
 from sklearn import svm, linear_model
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.linear_model import RandomizedLasso, LinearRegression
+from sklearn.linear_model import RandomizedLasso, LinearRegression, Lasso
 from sklearn.svm import LinearSVC
 from src.DEBPSO import DEBPSO
 from src.Experiment import Experiment
@@ -37,15 +37,16 @@ if VariableSetting.Feature_Selection_Algorithm == 'LinearSVC':
     feature_selection_algo = LinearSVC()
 
 #set model based on variable settings
+model = None
 if VariableSetting.Model == 'SVM':
     model = svm.SVR()
-elif VariableSetting.Model == 'BayesianRidge':
+elif VariableSetting.Model == 'BayesianR':
     model = linear_model.BayesianRidge()
-elif VariableSetting.Model == 'GradientBoostingRegressor':
+elif VariableSetting.Model == 'GBR':
     model = GradientBoostingRegressor()
-elif VariableSetting.Model == 'RandomizedLasso':
-    model = RandomizedLasso()
-elif VariableSetting.Model == 'LinearRegression':
+elif VariableSetting.Model == 'Lasso':
+    model = Lasso()
+elif VariableSetting.Model == 'LinearR':
     model = LinearRegression()
 
 output_filename = FileManager.create_output_file(type(feature_selection_algo).__name__, type(model).__name__)

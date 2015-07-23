@@ -105,6 +105,16 @@ class Experiment(object):
                 self.feature_selector.fitness_matrix = []
 
                 for population_idx in range(0, VariableSetting.Population_Size):
+                    #Test area for single model row [24- 188- 274- 302- 330- 344- 362]
+
+                    self.feature_selector.population_matrix[0] = np.zeros(VariableSetting.No_of_Descriptors)
+                    self.feature_selector.population_matrix[0][24] = 1
+                    self.feature_selector.population_matrix[0][188] = 1
+                    self.feature_selector.population_matrix[0][274] = 1
+                    self.feature_selector.population_matrix[0][302] = 1
+                    self.feature_selector.population_matrix[0][330] = 1
+                    self.feature_selector.population_matrix[0][344] = 1
+                    self.feature_selector.population_matrix[0][362] = 1
                     self.feature_selector.current_population_index = population_idx
                     if self.feature_selector is None:
                         data_inputs = self.data_manager.inputs
@@ -124,6 +134,8 @@ class Experiment(object):
                                                         , self.population_r2_values[population_idx][2]
                                                     )
 
+                    #Test area for single model row
+                    exit(0)
                 self.feature_selector.local_best_matrix = self.feature_selector.get_local_best_matrix()
                 if generation == 1:
                     self.feature_selector.initialize_local_best_fitness_for_first_generation()
